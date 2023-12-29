@@ -80,7 +80,6 @@ fn main() {
         ptrace::syscall(pid, None).unwrap();
         let status = waitpid(pid, None).unwrap();
         let regs = ptrace::getregs(pid);
-        let reg_v = vec![regs.unwrap().rdi, regs.unwrap().rsi, regs.unwrap().rdx, regs.unwrap().r10, regs.unwrap().r8, regs.unwrap().r9];
         match status {
             WaitStatus::Exited(_, code) => {
                 println!("Process exited with code {:?}", code);
@@ -94,6 +93,7 @@ fn main() {
                 if is_have_res {
                     match regs {
                         Ok(regs) => {
+                            let reg_v = vec![regs.rdi, regs.rsi, regs.rdx, regs.r10, regs.r8, regs.r9];
                             let a = regs.orig_rax;
                             if let Some(syscall) = syscalls.get(&a){
                                 print!("{}(", syscall.get_name());
